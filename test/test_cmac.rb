@@ -1,5 +1,7 @@
 require 'test/unit'
 require 'openssl/cmac'
+require 'coveralls'
+Coveralls.wear!
 
 # Testclass with Test Vectors from RFC's
 class CMACTest < Test::Unit::TestCase
