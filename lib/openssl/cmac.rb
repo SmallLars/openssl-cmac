@@ -81,7 +81,7 @@ module OpenSSL
       cipher = OpenSSL::Cipher.new(@cipher.name)
       cipher.encrypt
       cipher.key = @keys[0]
-      k = cipher.update("\x00" * 16).bytes
+      k = (cipher.update("\x00" * 16) + cipher.final).bytes[0...16]
       1.upto(2) do |i|
         k = k.pack('C*').unpack('B*')[0]
         msb = k.slice!(0)
@@ -125,7 +125,7 @@ module OpenSSL
     def reset
       @keys.clear
       @buffer.clear
-      @cipher.reset
+      @cipher.reset unless @keys[0].nil?
       @cipher.encrypt
       self
     end
@@ -156,11 +156,14 @@ module OpenSSL
       k = @keys[block.length == 16 ? 1 : 2].dup
       i = block.length.times { |t| k[t] ^= block[t] }
       k[i] ^= 0x80 if i < 16
-      mac = @cipher.update(k.pack('C*'))
+      mac = @cipher.update(k.pack('C*')) + @cipher.final
       @cipher.reset
       @cipher.encrypt
       @cipher.key = @keys[0]
-      mac[0...length]
+      # Each block is 16-bytes and the last block will always be PKCS#7 padding
+      # which we want to discard.  Take the last block prior to the padding for
+      # the MAC.
+      mac[-32...(-32 + length)]
     end
   end
 end
