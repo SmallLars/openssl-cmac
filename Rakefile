@@ -24,7 +24,7 @@ task :clean do
 end
 
 desc "Development Dependencies"
-task (:devinst) { sh "gem install --dev ./openssl-cmac-#{OpenSSL::CMAC::VERSION}.gem" }
+task (:devinst) { sh "gem install --dev ./pkg/openssl-cmac-#{OpenSSL::CMAC::VERSION}.gem" }
 
 desc "Bundle install"
 task (:bundle) { sh "bundle install" }
