@@ -87,39 +87,41 @@ class CMACTest < Test::Unit::TestCase
   end
 
   def test_cmac_update
-    # Test with 1 call of update and new CCM object for each test.
-    DATA.length.times do |i|
-      cmac = OpenSSL::CMAC.new('AES', KEY)
-      m = cmac.update(DATA[i]).digest.unpack('H*')[0]
-      assert_equal(MAC[i], m, "Test: 1, Vector: #{i + 1}")
-    end
-
-    # Test with 1 call of update and same CCM object for each test.
-    # There is no reset, because it should be possible to calculate
-    # a new mac after digest without reset.
-    cmac = OpenSSL::CMAC.new('AES', KEY)
-    DATA.length.times do |i|
-      m = cmac.update(DATA[i]).digest.unpack('H*')[0]
-      assert_equal(MAC[i], m, "Test: 2, Vector: #{i + 1}")
-    end
-
-    # Test with multiple calls of update and new CCM object for each test
-    1.upto(DATA.length - 1) do |i|
-      1.upto(17) do |c|
-        cmac = OpenSSL::CMAC.new('AES', KEY)
-        DATA[i].bytes.each_slice(c) { |w| cmac.update(w.pack('C*')) }
-        m = cmac.digest.unpack('H*')[0]
-        assert_equal(MAC[i], m, "Test: 3, Vector: #{i + 1}, Tokenlen: #{c}")
+    for cipher in ['aes', 'AES']
+      # Test with 1 call of update and new CCM object for each test.
+      DATA.length.times do |i|
+        cmac = OpenSSL::CMAC.new(cipher, KEY)
+        m = cmac.update(DATA[i]).digest.unpack('H*')[0]
+        assert_equal(MAC[i], m, "Test: 1, Vector: #{i + 1}")
       end
-    end
 
-    # Test with multiple calls of update and same CCM object for each test
-    cmac = OpenSSL::CMAC.new('AES', KEY)
-    1.upto(DATA.length - 1) do |i|
-      1.upto(17) do |c|
-        DATA[i].bytes.each_slice(c) { |w| cmac.update(w.pack('C*')) }
-        m = cmac.digest.unpack('H*')[0]
-        assert_equal(MAC[i], m, "Test: 4, Vector: #{i + 1}, Tokenlen: #{c}")
+      # Test with 1 call of update and same CCM object for each test.
+      # There is no reset, because it should be possible to calculate
+      # a new mac after digest without reset.
+      cmac = OpenSSL::CMAC.new(cipher, KEY)
+      DATA.length.times do |i|
+        m = cmac.update(DATA[i]).digest.unpack('H*')[0]
+        assert_equal(MAC[i], m, "Test: 2, Vector: #{i + 1}")
+      end
+
+      # Test with multiple calls of update and new CCM object for each test
+      1.upto(DATA.length - 1) do |i|
+        1.upto(17) do |c|
+          cmac = OpenSSL::CMAC.new(cipher, KEY)
+          DATA[i].bytes.each_slice(c) { |w| cmac.update(w.pack('C*')) }
+          m = cmac.digest.unpack('H*')[0]
+          assert_equal(MAC[i], m, "Test: 3, Vector: #{i + 1}, Tokenlen: #{c}")
+        end
+      end
+
+      # Test with multiple calls of update and same CCM object for each test
+      cmac = OpenSSL::CMAC.new(cipher, KEY)
+      1.upto(DATA.length - 1) do |i|
+        1.upto(17) do |c|
+          DATA[i].bytes.each_slice(c) { |w| cmac.update(w.pack('C*')) }
+          m = cmac.digest.unpack('H*')[0]
+          assert_equal(MAC[i], m, "Test: 4, Vector: #{i + 1}, Tokenlen: #{c}")
+        end
       end
     end
 
@@ -130,25 +132,27 @@ class CMACTest < Test::Unit::TestCase
   end
 
   def test_cmac_digest
-    cmac = OpenSSL::CMAC.new('AES', KEY)
-    m = cmac.update(DATA[3]).digest.unpack('H*')[0]
-    assert_equal(MAC[3], m, 'Digest with no update')
+    for cipher in ['aes', 'AES']
+      cmac = OpenSSL::CMAC.new(cipher, KEY)
+      m = cmac.update(DATA[3]).digest.unpack('H*')[0]
+      assert_equal(MAC[3], m, 'Digest with no update')
 
-    cmac.update(DATA[3].b[0...20])
-    m = cmac.update(DATA[3].b[20...64]).digest.unpack('H*')[0]
-    assert_equal(MAC[3], m, 'Digest after update')
+      cmac.update(DATA[3].b[0...20])
+      m = cmac.update(DATA[3].b[20...64]).digest.unpack('H*')[0]
+      assert_equal(MAC[3], m, 'Digest after update')
 
-    cmac.update(DATA[3])
-    m = cmac.update('').digest.unpack('H*')[0]
-    assert_equal(MAC[3], m, 'Empty digest')
+      cmac.update(DATA[3])
+      m = cmac.update('').digest.unpack('H*')[0]
+      assert_equal(MAC[3], m, 'Empty digest')
 
-    DATA.length.times do |i|
-      m = OpenSSL::CMAC.digest('AES', KEY, DATA[i]).unpack('H*')[0]
-      assert_equal(MAC[i], m, "Vector: #{i + 1}")
+      DATA.length.times do |i|
+        m = OpenSSL::CMAC.digest(cipher, KEY, DATA[i]).unpack('H*')[0]
+        assert_equal(MAC[i], m, "Vector: #{i + 1}")
 
-      m = OpenSSL::CMAC.digest('AES', KEY, DATA[i], 12).unpack('H*')[0]
-      assert_equal(24, m.length, "Vector: #{i + 1} - length")
-      assert_equal(MAC[i][0...24], m, "Vector: #{i + 1} - 12")
+        m = OpenSSL::CMAC.digest(cipher, KEY, DATA[i], 12).unpack('H*')[0]
+        assert_equal(24, m.length, "Vector: #{i + 1} - length")
+        assert_equal(MAC[i][0...24], m, "Vector: #{i + 1} - 12")
+      end
     end
   end
 

@@ -26,9 +26,7 @@ module OpenSSL
     #
     # @return [[String]] supported algorithms
     def self.ciphers
-      l = OpenSSL::Cipher.ciphers.keep_if { |c| c.end_with?('-128-CBC') }
-      l.length.times { |i| l[i] = l[i][0..-9] }
-      l
+      @ciphers ||= OpenSSL::Cipher.ciphers.select { |c| c.match(/-128-CBC$/i) }.map { |e| e[0..-9].upcase }.uniq
     end
 
     # Returns the authentication code as a binary string. The cipher parameter
@@ -56,13 +54,13 @@ module OpenSSL
     #
     # @return [Object] the new CMAC object
     def initialize(cipher, key = '')
-      unless CMAC.ciphers.include?(cipher)
+      unless CMAC.ciphers.include?(cipher.upcase)
         fail CMACError, "unsupported cipher algorithm (#{cipher})"
       end
 
       @keys = []
       @buffer = ''.force_encoding('ASCII-8BIT')
-      @cipher = OpenSSL::Cipher.new("#{cipher}-128-CBC")
+      @cipher = OpenSSL::Cipher.new("#{cipher.upcase}-128-CBC")
 
       self.key = key unless key == ''
     end
