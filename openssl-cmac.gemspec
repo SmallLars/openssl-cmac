@@ -7,7 +7,7 @@ Gem::Specification.new do |s|
   s.name                  = 'openssl-cmac'
   s.version               = OpenSSL::CMAC::VERSION
   s.required_ruby_version = '>= 2.0.0'
-  s.date                  = '2014-04-02'
+  s.date                  = '2019-07-20'
   s.authors               = ['Maxim M. Chechel', 'Lars Schmertmann']
   s.email                 = ['maximchick@gmail.com', 'SmallLars@t-online.de']
   s.summary               = 'RFC 4493, 4494, 4615 - CMAC'
