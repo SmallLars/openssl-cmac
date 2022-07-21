@@ -126,6 +126,7 @@ module OpenSSL
       @keys.clear
       @buffer.clear
       @cipher.reset unless @keys[0].nil?
+      @cipher.iv = "\x00" * 16
       @cipher.encrypt
       self
     end
@@ -160,6 +161,7 @@ module OpenSSL
       @cipher.reset
       @cipher.encrypt
       @cipher.key = @keys[0]
+      @cipher.iv = "\x00" * 16
       # Each block is 16-bytes and the last block will always be PKCS#7 padding
       # which we want to discard.  Take the last block prior to the padding for
       # the MAC.
