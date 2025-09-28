@@ -30,6 +30,10 @@ class CMACTest < Test::Unit::TestCase
                 980ae87b5f4c9c5214f5b6a8455e4c2d
                 290d9e112edb09ee141fcf64c0b72f3d)
 
+  def test_init_failure
+    assert_raise(OpenSSL::CMACError) { OpenSSL::CMAC.new('DES') }
+  end
+
   def test_cmac_keys
     cmac = OpenSSL::CMAC.new('AES')
     cmac.key = KEY
