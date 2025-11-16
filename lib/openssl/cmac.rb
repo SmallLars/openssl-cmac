@@ -59,7 +59,7 @@ module OpenSSL
       end
 
       @keys = []
-      @buffer = ''.force_encoding('ASCII-8BIT')
+      @buffer = String.new.force_encoding('ASCII-8BIT')
       @cipher = OpenSSL::Cipher.new("#{cipher.upcase}-128-CBC")
 
       self.key = key unless key == ''
