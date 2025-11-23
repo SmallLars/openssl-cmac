@@ -71,18 +71,7 @@ module OpenSSL
 
       @keys[0] = key.dup
       @cipher.key = @keys[0]
-
-      cipher = OpenSSL::Cipher.new(@cipher.name)
-      cipher.encrypt
-      cipher.key = @keys[0]
-      k = (cipher.update("\x00" * 16) + cipher.final).bytes[0...16]
-      1.upto(2) do |i|
-        k = k.pack('C*').unpack('B*')[0]
-        msb = k.slice!(0)
-        k = [k, '0'].pack('B*').bytes
-        k[15] ^= 0x87 if msb == '1'
-        @keys[i] = k.dup
-      end
+      generate_subkey
     end
 
     # Alias for: update
@@ -159,6 +148,21 @@ module OpenSSL
       # which we want to discard.  Take the last block prior to the padding for
       # the MAC.
       mac[-32...(-32 + length)]
+    end
+
+    private
+
+    def generate_subkey
+      cipher = OpenSSL::Cipher.new(@cipher.name).encrypt
+      cipher.key = @keys[0]
+      k = (cipher.update("\x00" * 16) + cipher.final).bytes[0...16]
+      1.upto(2) do |i|
+        k = k.pack('C*').unpack('B*')[0]
+        msb = k.slice!(0)
+        k = [k, '0'].pack('B*').bytes
+        k[15] ^= 0x87 if msb == '1'
+        @keys[i] = k.dup
+      end
     end
   end
 end
