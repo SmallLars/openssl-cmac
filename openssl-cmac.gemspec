@@ -14,10 +14,10 @@ Gem::Specification.new do |s|
   s.description           = 'Ruby Gem for RFC 4493, 4494, 4615 - The AES-CMAC Algorithm'
   s.homepage              = 'https://github.com/smalllars/openssl-cmac'
   s.license               = 'MIT'
-  s.post_install_message  = "Thanks for installing!"
+  s.post_install_message  = 'Thanks for installing!'
 
   s.files      = Dir.glob('lib/openssl/*.rb') +
-                 Dir.glob("lib/openssl/cmac/*.rb") + 
+                 Dir.glob('lib/openssl/cmac/*.rb') + 
                  ['Gemfile', 'Rakefile', '.rubocop.yml', '.yardopts']
   s.test_files = Dir.glob('test/test_*.rb') + Dir.glob('test/data_*')
 
