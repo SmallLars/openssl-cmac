@@ -1,12 +1,21 @@
+AllCops:
+  NewCops: enable
+  TargetRubyVersion: 2.0
+  SuggestExtensions: false
 
-ClassLength:
-  Max: 256
+Metrics/AbcSize:
+  Max: 25
+  Exclude:
+    - 'test/test_cmac.rb'
 
-MethodLength:
-  Max: 32
+Metrics/ClassLength:
+  Exclude:
+   - 'test/test_cmac.rb'
 
-CyclomaticComplexity:
-  Max: 8
+Metrics/MethodLength:
+  Exclude:
+    - 'test/test_cmac.rb'
 
-Documentation:
-  Enabled: false
+Metrics/BlockLength:
+  Exclude:
+    - 'test/test_cmac.rb'
