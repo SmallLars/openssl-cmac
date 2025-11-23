@@ -105,12 +105,7 @@ module OpenSSL
     #
     # @return [Object] self with initial state
     def reset
-      @keys.clear
-      @buffer.clear
-      @cipher.reset unless @keys[0].nil?
-      @cipher.iv = "\x00" * 16
-      @cipher.encrypt
-      self
+      reset_with_key
     end
 
     # Returns self updated with the message to be authenticated.
@@ -135,15 +130,11 @@ module OpenSSL
       raise CMACError, 'no key is set' unless length.between?(1, 16)
 
       block = @buffer.bytes
-      @buffer.clear
       k = @keys[block.length == 16 ? 1 : 2].dup
       i = block.length.times { |t| k[t] ^= block[t] }
       k[i] ^= 0x80 if i < 16
       mac = @cipher.update(k.pack('C*')) + @cipher.final
-      @cipher.reset
-      @cipher.encrypt
-      @cipher.key = @keys[0]
-      @cipher.iv = "\x00" * 16
+      reset_with_key(@keys[0])
       # Each block is 16-bytes and the last block will always be PKCS#7 padding
       # which we want to discard.  Take the last block prior to the padding for
       # the MAC.
@@ -151,6 +142,21 @@ module OpenSSL
     end
 
     private
+
+    def reset_with_key(key = '')
+      @buffer.clear
+      @cipher.reset
+      @cipher.encrypt
+      @cipher.iv = "\x00" * 16
+
+      if key.empty?
+        @keys.clear
+      else
+        @cipher.key = key
+      end
+
+      self
+    end
 
     def generate_subkey
       cipher = OpenSSL::Cipher.new(@cipher.name).encrypt

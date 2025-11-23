@@ -48,7 +48,7 @@ class CMACTest < Test::Unit::TestCase
     cmac.update(DATA[2])
     assert(cmac.instance_variable_get(:@buffer).length == 16, 'Wrong buffer')
 
-    cmac.reset
+    assert_equal(cmac, cmac.reset)
     assert(cmac.instance_variable_get(:@keys)[0].nil?, 'Reset fail')
     assert(cmac.instance_variable_get(:@keys)[1].nil?, 'Reset fail')
     assert(cmac.instance_variable_get(:@keys)[2].nil?, 'Reset fail')
