@@ -1,8 +1,9 @@
 require './lib/openssl/cmac/version'
 require 'bundler/gem_tasks'
 require 'rake/testtask'
+require 'rake/clean'
 
-task :default => :build
+task default: :build
 
 desc 'Run tests'
 Rake::TestTask.new do |t|
@@ -15,16 +16,21 @@ task :doc do
   sh 'yardoc'
 end
 
+CLEAN.include('coverage')
+CLEAN.include('doc')
+CLEAN.include('.yardoc')
+
 desc 'Uninstall and clean documentation'
 task :clean do
   sh 'gem uninstall openssl-cmac'
-  begin; sh 'rm -R ./coverage'; rescue; end
-  begin; sh 'rm -R ./.yardoc';  rescue; end
-  begin; sh 'rm -R ./doc';      rescue; end
 end
 
 desc 'Development Dependencies'
-task (:devinst) { sh "gem install --dev ./pkg/openssl-cmac-#{OpenSSL::CMAC::VERSION}.gem" }
+task :devinst do
+  sh "gem install --dev ./pkg/openssl-cmac-#{OpenSSL::CMAC::VERSION}.gem"
+end
 
 desc 'Bundle install'
-task (:bundle) { sh 'bundle install' }
+task :bundle do
+  sh 'bundle install'
+end
