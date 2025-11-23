@@ -28,4 +28,3 @@ task (:devinst) { sh "gem install --dev ./pkg/openssl-cmac-#{OpenSSL::CMAC::VERS
 
 desc 'Bundle install'
 task (:bundle) { sh 'bundle install' }
-
