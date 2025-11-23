@@ -91,7 +91,9 @@ class CMACTest < Test::Unit::TestCase
   end
 
   def test_cmac_update
-    for cipher in ['aes', 'AES']
+    cmac = nil
+
+    %w[aes AES].each do |cipher|
       # Test with 1 call of update and new CCM object for each test.
       DATA.length.times do |i|
         cmac = OpenSSL::CMAC.new(cipher, KEY)
@@ -136,7 +138,7 @@ class CMACTest < Test::Unit::TestCase
   end
 
   def test_cmac_digest
-    for cipher in ['aes', 'AES']
+    %w[aes AES].each do |cipher|
       cmac = OpenSSL::CMAC.new(cipher, KEY)
       m = cmac.update(DATA[3]).digest.unpack('H*')[0]
       assert_equal(MAC[3], m, 'Digest with no update')
