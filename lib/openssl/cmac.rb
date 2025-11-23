@@ -54,9 +54,7 @@ module OpenSSL
     #
     # @return [Object] the new CMAC object
     def initialize(cipher, key = '')
-      unless CMAC.ciphers.include?(cipher.upcase)
-        fail CMACError, "unsupported cipher algorithm (#{cipher})"
-      end
+      raise CMACError, "unsupported cipher algorithm (#{cipher})" unless CMAC.ciphers.include?(cipher.upcase)
 
       @keys = []
       @buffer = String.new.force_encoding('ASCII-8BIT')
@@ -138,7 +136,7 @@ module OpenSSL
     #
     # @return [Object] self with new state
     def update(data)
-      fail CMACError, 'no key is set' if @keys[0].nil?
+      raise CMACError, 'no key is set' if @keys[0].nil?
 
       @buffer += data
       @cipher.update(@buffer.slice!(0...16)) while @buffer.length > 16
@@ -149,8 +147,8 @@ module OpenSSL
     #
     # @param length [Number] length of the authentication code
     def digest(length = 16)
-      fail CMACError, 'no key is set' if @keys[0].nil?
-      fail CMACError, 'no key is set' unless length.between?(1, 16)
+      raise CMACError, 'no key is set' if @keys[0].nil?
+      raise CMACError, 'no key is set' unless length.between?(1, 16)
 
       block = @buffer.bytes
       @buffer.clear
