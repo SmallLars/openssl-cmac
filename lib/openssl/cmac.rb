@@ -42,8 +42,6 @@ module OpenSSL
       CMAC.new(cipher, key).update(data).digest(length)
     end
 
-    public
-
     # Returns an instance of OpenSSL::CMAC set with the cipher algorithm and
     # key to be used. The instance represents the initial state of the message
     # authentication code before any data has been processed. To process data
@@ -67,8 +65,6 @@ module OpenSSL
     # with all processed data cleared from it.
     #
     # @param key [String] binary key string
-    #
-    # @return [Object] self with initial state and new key
     def key=(key)
       reset
       key = CMAC.digest('AES', "\x00" * 16, key, 16) unless key.b.length == 16
@@ -87,7 +83,6 @@ module OpenSSL
         k[15] ^= 0x87 if msb == '1'
         @keys[i] = k.dup
       end
-      self
     end
 
     # Alias for: update
