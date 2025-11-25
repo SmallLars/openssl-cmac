@@ -41,7 +41,7 @@ jobs:
           bundler-cache: true
 
       - name: Run Rubocop
-        run: bundle exec rubocop
+        run: bundle exec rake rubocop
 
       - name: Run tests
         run: bundle exec rake test
@@ -51,4 +51,14 @@ jobs:
 
       - name: Generate docs
         run: bundle exec rake doc
+
+      - name: Build Install Uninstall
+        run: |
+          bundle install
+          gem build -V ./openssl-cmac.gemspec
+          gem install ./openssl-cmac-*.gem
+          gem uninstall openssl-cmac
+
+      - name: Run cleanup
+        run: bundle exec rake clean
 
