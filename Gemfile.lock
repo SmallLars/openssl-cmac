@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    openssl-cmac (2.0.2)
+    openssl-cmac (2.1.0)
       openssl (~> 3.0)
 
 GEM
