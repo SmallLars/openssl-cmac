@@ -55,6 +55,7 @@ jobs:
       - name: Build Install Uninstall
         run: |
           bundle install
+          export SOURCE_DATE_EPOCH=$(date +%s)
           gem build -V ./openssl-cmac.gemspec
           gem install ./openssl-cmac-*.gem
           gem uninstall openssl-cmac

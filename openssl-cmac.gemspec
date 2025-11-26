@@ -23,6 +23,7 @@ Gem::Specification.new do |s|
   s.extra_rdoc_files = ['README.md', 'LICENSE']
   s.metadata = {
     'rubygems_mfa_required' => 'true',
-    'source_code_uri' => 'https://github.com/smalllars/openssl-cmac'
+    'source_code_uri' => 'https://github.com/smalllars/openssl-cmac',
+    'documentation_uri' => "https://www.rubydoc.info/gems/openssl-cmac/#{OpenSSL::CMAC::VERSION}"
   }
 end
